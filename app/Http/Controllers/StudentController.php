@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Student;
+use Illuminate\Http\Request;
 
 class StudentController extends Controller
 {
@@ -12,8 +12,9 @@ class StudentController extends Controller
      */
     public function index()
     {
-        $students=Student::all();
-        return view('student.index',compact('students'));
+        // Order ascending by id
+        $students = Student::orderBy('id', 'asc')->get();
+        return view('student.index', compact('students'));
     }
 
     /**
@@ -29,22 +30,25 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
-        $data=$request->validate([
-            'name'=>'required',
-            'email'=>'required|email|unique:students,email',
-            'age'=>'required|integer|min:1'
+        $validated = $request->validate([
+            'name'    => 'required|string|max:255',
+            'email'   => 'required|email|unique:students,email',
+            'phone'   => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:500',
         ]);
-        //create student
-        Student::create($data);
-        return redirect(route('student.create'))->with('success','Student created successfully.');
+
+        Student::create($validated);
+
+        return redirect()->route('student.index')
+            ->with('success', 'Student created successfully.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Student $student)
     {
-        //
+        return view('student.show', compact('student'));
     }
 
     /**
@@ -52,19 +56,24 @@ class StudentController extends Controller
      */
     public function edit(Student $student)
     {
-        return view('student.edit',compact('student'));
+        return view('student.edit', compact('student'));
     }
-    
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, Student $student)
     {
-        //
-       
-        $student->update($request->all());
-        return redirect(route('student.index'))->with('success','Student updated successfully.');
+        $validated = $request->validate([
+            'name'    => 'required|string|max:255',
+            'email'   => 'required|email|unique:students,email,' . $student->id,
+            'phone'   => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:500',
+        ]);
+
+        $student->update($validated);
+
+        return redirect()->route('student.index')->with('success', 'Student updated successfully.');
     }
 
     /**
@@ -73,7 +82,7 @@ class StudentController extends Controller
     public function destroy(Student $student)
     {
         $student->delete();
-        return redirect(route('student.index'))->with('success','Student deleted successfully.');
+
+        return redirect()->route('student.index')->with('success', 'Student deleted successfully.');
     }
-    
 }

@@ -17,13 +17,19 @@
 
         <!-- Buttons -->
         <div class="d-flex justify-content-center mt-4">
-            <a href="{{ route('student.index') }}" class="btn btn-success btn-lg mx-2">
-                Manage Students
-            </a>
+            @auth
+                <a href="{{ route('students.index') }}" class="btn btn-success btn-lg mx-2">
+                    Manage Students
+                </a>
 
-            <a href="{{ route('logout') }}" class="btn btn-danger btn-lg mx-2">
-                Logout
-            </a>
+                <form action="{{ route('logout') }}" method="POST" class="d-inline mx-2">
+                    @csrf
+                    <button type="submit" class="btn btn-danger btn-lg">Logout</button>
+                </form>
+            @else
+                <a href="{{ route('login') }}" class="btn btn-primary btn-lg mx-2">Login</a>
+                <a href="{{ route('register') }}" class="btn btn-secondary btn-lg mx-2">Register</a>
+            @endauth
         </div>
     </div>
 

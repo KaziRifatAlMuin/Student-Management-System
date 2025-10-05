@@ -36,9 +36,16 @@
                 @enderror
             </div>
 
-            <button type="submit" class="btn btn-primary">Login</button>
-           
+            <button type="submit" class="btn btn-primary" onclick="this.disabled=true; this.form.submit();">Login</button>
         </form>
+
+        <div class="mt-3">
+            @guest
+                <p>Don't have an account? <a href="{{ route('register') }}">Register here</a>.</p>
+            @else
+                <p>Already logged in? <a href="{{ route('dashboard') }}">Go to dashboard</a>.</p>
+            @endguest
+        </div>
     </div>
 </body>
 </html>
